@@ -1,0 +1,34 @@
+%The program requires an image as input in the form of a rgb image and performing further conversions to get the final output. 
+%Reading image
+rgb = imread('F:\Development\MATLAB Codes\ImgProcBrainTumour\Images\img1.jpg');  
+
+
+%The image imported to the program using the previous method is now converted to Gray Scale image.
+%Converting to Gray Scale 
+gray = rgb2gray(rgb);                                                                                           
+
+%Generating standard inputs for the High Pass filter.
+kernel1 = -1 * ones(3)/9;
+kernel1(2,2) = 8/9
+
+%Applying High Pass Filter
+high_fil = imfilter(single(gray), kernel1);                                       
+
+%The image, after passing through the high pass filter is free from the high frequency noise signals.
+%Applying Median Filter to the gray scale image
+med_fil = medfilt2(high_fil);                                                     
+                                                                           
+%The above steps enhances the quality of the image which helps in getting a clearer picture of the processed image.                                                                         
+
+%The below steps help in finding the threshold for input image                                                                           
+thresh = graythresh(med_fil) 
+
+%The below step segments the image using threshold segmentation                                                   
+bin= imbinarize(med_fil,thresh)                                                  
+
+%Watershed Segmentation procedure
+water = watershed(bin);
+Lrgb = label2rgb(water);                                                       
+
+%Presents the final output image.
+imshow(Lrgb)
